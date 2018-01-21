@@ -1,7 +1,6 @@
 package kinesis
 
 import (
-	"fmt"
 	"s3-kinesis-replay/validate"
 	"sync"
 	"time"
@@ -83,7 +82,6 @@ func (p *Producer) process(entries chan *kinesis.PutRecordsRequestEntry) {
 		// create batch
 		batch := p.bufferWithTimeOrCount(entries, e, 500, p.bufferWindow)
 		params.Records = batch
-		fmt.Printf("committing batch %d", len(batch))
 
 		// batch write to kinesis
 		var output *kinesis.PutRecordsOutput

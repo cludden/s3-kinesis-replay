@@ -41,18 +41,22 @@ func NewParser(c *ParserConfig) (*Parser, error) {
 		return nil, err
 	}
 	// generate json schema
-	loader := gojsonschema.NewReferenceLoader(c.Schema)
-	schema, err := gojsonschema.NewSchema(loader)
-	if err != nil {
-		return nil, err
-	}
+
 	// create new parser
 	p := &Parser{
 		concurrency:  c.Concurrency,
 		log:          c.Log,
 		partitionKey: c.PartitionKey,
-		schema:       schema,
 		wg:           &sync.WaitGroup{},
+	}
+	// add json schema if included
+	if c.Schema != "" {
+		loader := gojsonschema.NewReferenceLoader(c.Schema)
+		schema, err := gojsonschema.NewSchema(loader)
+		if err != nil {
+			return nil, err
+		}
+		p.schema = schema
 	}
 	// set optional settings
 	if c.Delimiter != nil {
@@ -81,7 +85,7 @@ func (p *Parser) Parse(objects chan *replay.Object, entries chan *kinesis.PutRec
 // the configured delimiter, filtering invalid records using the defined jsons chema
 func (p *Parser) worker(wg *sync.WaitGroup, objects chan *replay.Object, entries chan *kinesis.PutRecordsRequestEntry) {
 	for o := range objects {
-		log := p.log.WithField("key", o.Object.Key)
+		log := p.log.WithField("key", *o.Object.Key)
 		buff := o.Data
 
 		// apply replacements
@@ -99,12 +103,17 @@ func (p *Parser) worker(wg *sync.WaitGroup, objects chan *replay.Object, entries
 
 		// parse the necessary parts of each record and filter out invalid records
 		for _, raw := range records {
-			// validate record against schema
-			record := gojsonschema.NewStringLoader(raw)
-			result, err := p.schema.Validate(record)
-			if err != nil || !result.Valid() {
-				log.WithError(err).WithField("record", raw).Warnln("skipping invalid record")
-				continue
+			// validate record against schema if defined
+			if p.schema != nil {
+				record := gojsonschema.NewStringLoader(raw)
+				result, err := p.schema.Validate(record)
+				if err != nil {
+					log.WithError(err).Warnln("skipping record with validation error")
+					continue
+				} else if !result.Valid() {
+					log.WithField("details", result.Errors()).Warnln("skipping invalid record")
+					continue
+				}
 			}
 
 			// parse record
@@ -141,7 +150,7 @@ type ParserConfig struct {
 	PartitionKey string             `validate:"required"`
 	Replace      *regexp.Regexp     `validate:"-"`
 	ReplaceWith  string             `validate:"-"`
-	Schema       string             `validate:"required"`
+	Schema       string             `validate:"-"`
 }
 
 // NewParserConfig returns a new config value with appropriate defaults

@@ -1,0 +1,27 @@
+digraph overview {
+    compound=true;
+    rankdir="TB";
+    s3 [label="S3" style="filled" fillcolor="tomato1"]
+    kinesis [label="Kinesis   " shape="cds" style="filled" fillcolor="gold"]
+    
+
+    s3->archive [label="  Scan & Download\n Concurrently"];
+    producer->kinesis [label="  Batch Write"];
+
+    subgraph clusterApp {
+        rankdir="TB"
+        labeljust="r"
+        label="s3-kinesis-replay\n "
+        style="filled"
+        color="lightgrey"
+
+        archive [label="Archive" shape="rect"]
+        parser [label="Parser" shape="rect"]
+        producer [label="Producer" shape="rect"]
+
+        archive->parser [label="parse & filter"]
+        parser->producer [label="buffer by \ntime/count"]
+
+        { rank=same archive,parser,producer}
+    }
+}

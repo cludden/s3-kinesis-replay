@@ -75,8 +75,8 @@ func createArchive(log logrus.FieldLogger, client s3iface.S3API, downloader s3.D
 	if viper.IsSet("s3.start_after") {
 		archiveConfig.StartAfter = viper.GetString("s3.start_after")
 	}
-	if viper.IsSet("s3.start_after") {
-		archiveConfig.StartAfter = viper.GetString("s3.start_after")
+	if viper.IsSet("s3.stop_at") {
+		archiveConfig.StopAt = viper.GetString("s3.stop_at")
 	}
 	archive, err := s3.NewArchive(archiveConfig)
 	if err != nil {
@@ -206,8 +206,8 @@ func init() {
 	rootCmd.Flags().Int("json-concurrency", 4, "json parser concurrency")
 	viper.BindPFlag("json.concurrency", rootCmd.Flags().Lookup("json-concurrency"))
 
-	rootCmd.Flags().String("json-partition-key", "", "json parser parition key path")
-	viper.BindPFlag("json.partition_key", rootCmd.Flags().Lookup("json-partition-key"))
+	rootCmd.Flags().String("partition-key", "", "json parser parition key path")
+	viper.BindPFlag("json.partition_key", rootCmd.Flags().Lookup("partition-key"))
 
 	rootCmd.Flags().String("json-schema", "", "json parser schema path")
 	viper.BindPFlag("json.schema", rootCmd.Flags().Lookup("json-schema"))
@@ -233,20 +233,23 @@ func init() {
 	rootCmd.Flags().String("log-level", "", "log verbosity level")
 	viper.BindPFlag("log.level", rootCmd.Flags().Lookup("log-level"))
 
-	rootCmd.Flags().String("parser-format", "json", "parser format")
-	viper.BindPFlag("parser.format", rootCmd.Flags().Lookup("parser-format"))
+	rootCmd.Flags().String("format", "", "parser format")
+	viper.BindPFlag("parser.format", rootCmd.Flags().Lookup("format"))
 
-	rootCmd.Flags().String("parser-delimiter", "", "optional delimiter regexp")
-	viper.BindPFlag("parser.delimiter", rootCmd.Flags().Lookup("parser-delimiter"))
+	rootCmd.Flags().String("delimiter", "", "optional delimiter regexp")
+	viper.BindPFlag("parser.delimiter", rootCmd.Flags().Lookup("delimiter"))
 
-	rootCmd.Flags().String("parser-replace", "", "optional replace regexp")
-	viper.BindPFlag("parser.replace", rootCmd.Flags().Lookup("parser-replace"))
+	rootCmd.Flags().String("replace", "", "optional replace regexp")
+	viper.BindPFlag("parser.replace", rootCmd.Flags().Lookup("replace"))
 
-	rootCmd.Flags().String("parser-replace-with", "", "optional replacement string")
-	viper.BindPFlag("parser.replace_with", rootCmd.Flags().Lookup("parser-replace-with"))
+	rootCmd.Flags().String("replace-with", "", "optional replacement string")
+	viper.BindPFlag("parser.replace_with", rootCmd.Flags().Lookup("replace-with"))
 
 	rootCmd.Flags().String("bucket", "", "s3 archive bucket name")
 	viper.BindPFlag("s3.bucket", rootCmd.Flags().Lookup("bucket"))
+
+	rootCmd.Flags().Int("s3-concurrency", 4, "s3 download concurrency")
+	viper.BindPFlag("s3.concurrency", rootCmd.Flags().Lookup("s3-concurrency"))
 
 	rootCmd.Flags().String("prefix", "", "s3 archive prefix")
 	viper.BindPFlag("s3.prefix", rootCmd.Flags().Lookup("prefix"))

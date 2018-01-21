@@ -9,16 +9,18 @@ services:
       AWS_ACCESS_KEY_ID: xxxxx
       AWS_REGION: us-east-1
       AWS_SECRET_ACCESS_KEY: xxxxx
-      KINESIS_ENDPOINT: kinesis:4567
-      S3_ENDPOINT: s3:8000
+      AWS_SESSION_TOKEN: xxxxx
+      KINESIS_ENDPOINT: http://kinesis:4567
+      S3_ENDPOINT: http://s3:8000
     links:
       - kinesis:kinesis
       - s3:s3
     volumes:
-      - ./:/go/src/mysql-binlog-consumer
-      - ./testutil/test.yml:/etc/mysql-binlog-consumer/config.yml
-      - /go/src/mysql-binlog-consumer/vendor
-      - /go/src/myql-binlog-consumer/.gopath~
+      - ./:/go/src/s3-kinesis-replay
+      - ./testutil/config.yml:/etc/s3-kinesis-replay/config.yml
+      - ./testutil/schema.json:/etc/s3-kinesis-replay/schema.json
+      - /go/src/s3-kinesis-replay/vendor
+      - /go/src/s3-kinesis-replay/.gopath~
   
   # kinesis container
   kinesis:

@@ -2,11 +2,14 @@
     "$id": "foo",
     "type": "object",
     "properties": {
-        "resource": {
-            "type": "string"
+        "type": {
+            "enum": [
+                "foo",
+                "bar"
+            ]
         }
     },
     "required": [
-        "resource"
+        "type"
     ]
 }

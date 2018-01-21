@@ -1,10 +1,24 @@
+json:
+  concurrency: 4
+  schema: file:///etc/s3-kinesis-replay/schema.json
+  partition_key: foo.bar.partitionKey
+
+kinesis:
+  backoff_interval: 500ms
+  backoff_max_interval: 5s
+  buffer_window: 10s
+  stream_name: test
 
 log:
   format: text
-  level: debug
+  level: fatal
 
 parser:
-  delimiter: ","
+  delimiter: "},{"
   format: json
   replace: "}[\r\n]*{"
-  replace_with: "},{"
+  replace_with: "}},{{"
+
+s3:
+  bucket: test
+  concurrency: 4
