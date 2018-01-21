@@ -1,0 +1,8 @@
+.git
+.gitignore
+architecture.dot
+architecture.png
+docker-compose.yml
+Dockerfile
+Dockerfile.test
+vendor

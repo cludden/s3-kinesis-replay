@@ -1,0 +1,12 @@
+{
+    "$id": "foo",
+    "type": "object",
+    "properties": {
+        "resource": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "resource"
+    ]
+}

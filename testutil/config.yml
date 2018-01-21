@@ -1,0 +1,10 @@
+
+log:
+  format: text
+  level: debug
+
+parser:
+  delimiter: ","
+  format: json
+  replace: "}[\r\n]*{"
+  replace_with: "},{"

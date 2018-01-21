@@ -1,0 +1,34 @@
+version: "2.1"
+services:  
+  # test container
+  test:
+    build:
+      context: .
+      dockerfile: ./testutil/Dockerfile
+    environment:
+      AWS_ACCESS_KEY_ID: xxxxx
+      AWS_REGION: us-east-1
+      AWS_SECRET_ACCESS_KEY: xxxxx
+      KINESIS_ENDPOINT: kinesis:4567
+      S3_ENDPOINT: s3:8000
+    links:
+      - kinesis:kinesis
+      - s3:s3
+    volumes:
+      - ./:/go/src/mysql-binlog-consumer
+      - ./testutil/test.yml:/etc/mysql-binlog-consumer/config.yml
+      - /go/src/mysql-binlog-consumer/vendor
+      - /go/src/myql-binlog-consumer/.gopath~
+  
+  # kinesis container
+  kinesis:
+    image: vsouza/kinesis-local
+    command: --port 4567 --shardLimit 100
+    ports:
+      - "4567:4567"
+
+  # s3 container
+  s3:
+    image: scality/s3server
+    ports:
+     - "8000:8000"
