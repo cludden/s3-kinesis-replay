@@ -7,6 +7,10 @@ BIN      = $(GOPATH)/bin
 BASE     = $(GOPATH)/src/$(PACKAGE)
 PKGS     = $(or $(PKG),$(shell cd $(BASE) && env GOPATH=$(GOPATH) $(GO) list ./... | grep -v "mock"))
 TESTPKGS = $(shell env GOPATH=$(GOPATH) $(GO) list -f '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' $(PKGS))
+GOOS ?= linux
+GOARCH ?= amd64
+CGO_ENABLED ?= 0
+SUFFIX ?= ""
 
 export GOPATH
 
@@ -20,10 +24,10 @@ M = $(shell printf "\033[34;1m▶\033[0m")
 
 .PHONY: all
 all: fmt lint vendor | $(BASE) ; $(info $(M) building executable…) @ ## Build program binary
-	$Q cd $(BASE) && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO) build \
+	$Q cd $(BASE) && GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) $(GO) build \
 		-tags release \
 		-ldflags '-X $(PACKAGE)/cmd.Version=$(VERSION) -X $(PACKAGE)/cmd.BuildDate=$(DATE)' \
-		-o bin/$(PACKAGE)
+		-o bin/$(PACKAGE)-$(GOOS)-$(GOARCH)$(SUFFIX)
 
 $(BASE): ; $(info $(M) setting GOPATH…)
 	@mkdir -p $(dir $@)
