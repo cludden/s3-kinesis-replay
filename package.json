@@ -1,6 +1,6 @@
 {
   "name": "s3-kinesis-replay",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "a cli for replaying historical kinesis messages via an s3 archive",
   "main": "index.js",
   "scripts": {
