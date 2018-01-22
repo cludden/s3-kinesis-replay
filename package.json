@@ -1,0 +1,19 @@
+{
+  "name": "s3-kinesis-replay",
+  "version": "0.0.0",
+  "description": "a cli for replaying historical kinesis messages via an s3 archive",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cludden/s3-kinesis-replay.git"
+  },
+  "author": "chris ludden",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cludden/s3-kinesis-replay/issues"
+  },
+  "homepage": "https://github.com/cludden/s3-kinesis-replay#readme"
+}
