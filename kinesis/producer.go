@@ -147,7 +147,7 @@ type ProducerConfig struct {
 	StreamName         string                  `validate:"required"`
 }
 
-// NewProducerConfig returns a new ProducerConfig valueu with appropriate
+// NewProducerConfig returns a new ProducerConfig value with appropriate
 // defaults
 func NewProducerConfig() *ProducerConfig {
 	return &ProducerConfig{
